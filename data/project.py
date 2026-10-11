@@ -107,12 +107,15 @@ distance = ((df_filled["VDM_GPS_Latitude"] - max_lat) ** 2 + (df_filled["VDM_GPS
 # each pass through the crossing point
 crossings = get_state_intervals(df_filled, distance < 0.0001)
 starts = crossings["start_s"].to_list()
+print("STARTS", starts)
 
 # end of driving = last time the car was moving
 drive_end = df_filled.filter(calc_speed > 0)["Time"].max()
 
 # laps: crossing to next crossing, then last crossing to end of driving
-laps = [(starts[i], starts[i + 1]) for i in range(len(starts) - 1)]
+laps = []
+for i in range(len(starts) -1):
+    laps.append((starts[i], starts[i+1]))
 n_complete = len(laps)
 laps.append((starts[-1], drive_end))
 
@@ -125,8 +128,6 @@ sc = plt.scatter(df_filled["VDM_GPS_Longitude"], df_filled["VDM_GPS_Latitude"], 
 plt.colorbar(sc, label="Time (s)")
 plt.scatter(df_filled["VDM_GPS_Longitude"][0], df_filled["VDM_GPS_Latitude"][0], color="blue", label="Start")
 plt.scatter(ref_lon, max_lat, color="red", label="Crossing point")
-for k, t in enumerate(starts):
-    plt.annotate(f"Crossing {k + 1}: {t:.1f} s", (ref_lon, max_lat), xytext=(10, 10 + 15 * k), textcoords="offset points")
 plt.title("Track (GPS) colored by time")
 plt.xlabel("Longitude (°)")
 plt.ylabel("Latitude (°)")
