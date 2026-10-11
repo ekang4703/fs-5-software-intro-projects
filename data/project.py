@@ -106,10 +106,9 @@ distance = ((df_filled["VDM_GPS_Latitude"] - max_lat) ** 2 + (df_filled["VDM_GPS
 
 # each pass through the crossing point
 crossings = get_state_intervals(df_filled, distance < 0.0001)
+print("CROSSINGS", crossings)
 starts = []
-for s in crossings["start_s"]:
-    if not starts or s - starts[-1] > 5:
-        starts.append(s)
+starts = crossings["start_s"].to_list()
 
 # end of driving = last time the car was moving
 drive_end = df_filled.filter(calc_speed > 0)["Time"].max()
